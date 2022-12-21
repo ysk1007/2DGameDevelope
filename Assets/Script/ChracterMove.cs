@@ -6,7 +6,10 @@ public class ChracterMove : MonoBehaviour
 {
     public float moveSpeed = 1f; //플레이어 움직임 속도
     public float jumpPower = 4f; //플레이어 점프력
-    public float rollforce = 5f;
+    public float rollforce = 1f;
+    public float Damage = 1f;
+    public GameObject slash;
+    public Transform slash_pos;
 
     private Sensor_Chracter c_groundSensor;
     private Sensor_Chracter c_wallSensorR1;
@@ -17,6 +20,10 @@ public class ChracterMove : MonoBehaviour
     public float c_rollDuration = 0.53f;
     public float c_rollCurrentTime;
     public bool c_rolling = false;
+
+    public float c_attackDuration = 0.24f;
+    public float c_attackCurrentTime;
+    public bool c_attacking = false;
 
     Rigidbody2D rigid; //리지드바디(중력) 변수 설정
     Animator animator; //애니메이터 변수 설정
@@ -83,6 +90,11 @@ public class ChracterMove : MonoBehaviour
                 animator.SetTrigger("doJumping");       //애니메이터 점프중
             }
 
+        }
+
+        if (Input.GetMouseButtonDown(0))    //마우스 좌클릭 했을때
+        {
+            Attack();
         }
     }
 
@@ -175,12 +187,17 @@ public class ChracterMove : MonoBehaviour
             c_rolling = true; // 구르는 중
             animator.SetTrigger("isRolling");   //구르는 모션
             rigid.velocity = new Vector2(animator.GetInteger("Direction") * rollforce, rigid.velocity.y);   //방향에 구르는 속도 곱 하여 힘을 줌
+            moveSpeed += rollforce;
             Invoke("RollStop", c_rollDuration); //c_rollDuration(0.53초) 뒤 RollStop 함수 실행
         }
     }
 
     void RollStop()
     {
+        if (animator.GetBool("isRunning"))  //달리고 있다면
+            moveSpeed = 2f; //달리는 속도 유지
+        else
+            moveSpeed = 1f; //아니라면 기본 속도
         c_rolling = false;  //구르는 중 아님
     }
 
@@ -193,6 +210,30 @@ public class ChracterMove : MonoBehaviour
         }
         else if (rigid.velocity.y >= 0) //y축 속도가 0보다 크거나 같다면 (상승, 지면 상태일 때)
             animator.SetBool("falling", false); //낙하 모션 중지
+    }
+
+    void Attack()
+    {
+        if (!c_attacking && !animator.GetBool("doGrabing")) //공격중이 아니며, 벽 잡는중이 아닐때
+        {
+            c_attacking = true; //공격중
+            animator.SetBool("isAttacking", true);  //애니메이션 공격 모션 true
+            animator.SetTrigger("doAttack");    //공격 트리거 작동
+
+            var newSlash = Instantiate(slash,slash_pos.position, transform.rotation);   //새로운 공격을 생성 Instantiate(오브젝트, 오브젝트 포지션, 각도);
+            newSlash.transform.parent = gameObject.transform;   //새로운 공격의 좌표는 게임오브젝트의 좌표
+
+            Invoke("AttackStop", c_attackDuration); //c_attackDuration(0.12초) 뒤 AttackStop 함수 실행
+        }
+
+        else
+            return;
+    }
+
+    void AttackStop()
+    {
+        c_attacking = false;    //공격중 아님
+        animator.SetBool("isAttacking", false); //애니메이션 공격모션 중지
     }
 
     //Attach Event
