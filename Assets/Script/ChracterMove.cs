@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class ChracterMove : MonoBehaviour
 {
+    public GameManager gameManager;
+
     public float moveSpeed = 1f; //플레이어 움직임 속도
     public float jumpPower = 4f; //플레이어 점프력
     public float rollforce = 1f;
@@ -126,7 +128,6 @@ public class ChracterMove : MonoBehaviour
             animator.SetBool("isMoving", true);     //걷는 모션
             animator.SetInteger("Direction", -1);   //애니메이터의 방향 파라미터 값을 -1 (음수=왼쪽)
         }
-
         /*transform.position += moveVelocity * moveSpeed * Time.deltaTime; //현재 물체의 포지션 값에 움직임을 더함*/
     }
 
@@ -251,7 +252,7 @@ public class ChracterMove : MonoBehaviour
         {
             animator.SetBool("wallAttach", true);   //벽 감지
         }
-            
+           
 
     }
 

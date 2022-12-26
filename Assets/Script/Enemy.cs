@@ -1,18 +1,26 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI; 
 
 public class Enemy : MonoBehaviour
 {
-    public float EnemyHP = 1000;    //체력
+    public float EnemyHP = 1000;    //몬스터 피통
+    public float CurrentHp; //몬스터 현재 hp
     SpriteRenderer sprite;
     ParticleSystem particle_1;
     ParticleSystem particle_2;
 
+    public GameObject hpBarBackground;
+    public Image hpBarFiled_1;
+    public Image hpBarFiled_2;
 
     // Start is called before the first frame update
     void Start()
     {
+        CurrentHp = EnemyHP;
+        hpBarFiled_1.fillAmount = 1f;
+        hpBarFiled_2.fillAmount = 1f;
         sprite = gameObject.GetComponent<SpriteRenderer>(); //스프라이트(이미지) 속성을 가져옴
         particle_1 = transform.Find("flare_1").GetComponent<ParticleSystem>();  //파티클효과 flare_1 속성을 가져옴
         particle_2 = transform.Find("flare_dark_1").GetComponent<ParticleSystem>(); //파티클효과 flare_dark_1 속성을 가져옴
@@ -26,11 +34,14 @@ public class Enemy : MonoBehaviour
 
     public void Hit(float damage)
     {
-        EnemyHP -= damage;  //체력에서 damage 만큼 깎음
+        CurrentHp -= damage;  //체력에서 damage 만큼 깎음
         StartCoroutine(FadeTo());   //코루틴 FadeTo 실행
         particle_1.Play();  //파티클 1 실행
         particle_2.Play();  //파티클 2 실행
-        Debug.Log("남은 HP : " + EnemyHP);
+        Debug.Log("남은 HP : " + CurrentHp);
+        hpBarFiled_1.fillAmount = CurrentHp / EnemyHP;
+        hpBarFiled_2.fillAmount = CurrentHp / EnemyHP;
+        hpBarBackground.SetActive(true);
     }
 
     IEnumerator FadeTo()    //피격시 적이 껌뻑껌뻑 거리는 효과

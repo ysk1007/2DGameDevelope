@@ -384,8 +384,11 @@
 "Assets/Hero Knight - Pixel Art/Demo/HeroKnight.cs"
 "Assets/Hero Knight - Pixel Art/Demo/Sensor_HeroKnight.cs"
 "Assets/scr.cs"
+"Assets/Script/CameraFollow.cs"
 "Assets/Script/ChracterMove.cs"
 "Assets/Script/Enemy.cs"
+"Assets/Script/GameManager.cs"
+"Assets/Script/SceneChange.cs"
 "Assets/Script/Sensor_Chracter.cs"
 "Assets/Script/Slash.cs"
 -langversion:9.0
